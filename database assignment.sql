@@ -182,3 +182,40 @@ BEGIN
     FROM BOOK_COPIES
     WHERE BookID = (SELECT BookID FROM BOOKS WHERE Title = 'The Lost Tribe')
     AND BranchID = (SELECT Branch
+
+ CREATE PROCEDURE GetLostTribeCopiesAtSharpstown
+AS
+BEGIN
+    SELECT Number_Of_Copies
+    FROM BOOK_COPIES
+    WHERE BookID = (SELECT BookID FROM BOOKS WHERE Title = 'The Lost Tribe')
+    AND BranchID = (SELECT Branch
+
+    CREATE PROCEDURE GetBorrowersWithoutLoans
+AS
+BEGIN
+    SELECT b.Name
+    FROM BORROWER b
+    LEFT JOIN BOOK_LOANS bl ON b.CardNo = bl.CardNo
+    WHERE bl.CardNo IS NULL;
+END;
+
+CREATE PROCEDURE GetAllBooksAndAuthors
+AS
+BEGIN
+    SELECT b.Title, ba.AuthorName
+    FROM BOOKS b
+    JOIN BOOK_AUTHORS ba ON b.BookID = ba.BookID;
+END;
+
+-- How many copies of "The Lost Tribe" are owned by the Sharpstown branch?
+EXEC GetLostTribeCopiesAtSharpstown;
+
+-- How many copies of "The Lost Tribe" are owned by each library branch?
+EXEC GetLostTribeCopiesPerBranch;
+
+-- Retrieve the names of all borrowers who do not have any books checked out.
+EXEC GetBorrowersWithoutLoans;
+
+-- Get all book titles and the authors' names.
+EXEC GetAllBooksAndAuthors;
