@@ -1,21 +1,43 @@
 using System;
+using System.Data.Entity;
+using StudentConsoleApp.Data;
+using StudentConsoleApp.Models;
 
-class Program
+namespace StudentConsoleApp
 {
-    static void Main(string[] args)
+    class Program
     {
-        using (var context = new SchoolContext())
+        static void Main(string[] args)
         {
-            var student = new Student
+            Database.SetInitializer(new StudentInitializer());
+
+            using (var context = new StudentContext())
             {
-                FirstName = "John",
-                LastName = "Doe"
-            };
+                // Ensure database is created and seeded
+                context.Database.Initialize(force: true);
 
-            context.Students.Add(student);
-            context.SaveChanges();
+                // Add a new student
+                var student = new Student
+                {
+                    FirstName = "Jane",
+                    LastName = "Smith",
+                    DateOfBirth = new DateTime(1999, 5, 20)
+                };
 
-            Console.WriteLine("Student added successfully.");
+                context.Students.Add(student);
+                context.SaveChanges();
+
+                Console.WriteLine("Student added successfully!");
+
+                // Display all students
+                var students = context.Students;
+                foreach (var s in students)
+                {
+                    Console.WriteLine($"ID: {s.StudentId}, Name: {s.FirstName} {s.LastName}, DOB: {s.DateOfBirth.ToShortDateString()}");
+                }
+            }
+
+            Console.ReadLine();
         }
     }
 }
